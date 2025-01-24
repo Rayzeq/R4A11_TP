@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TP1</string>
+    <string name="display_label">Vue2</string>
+
+    <string name="next">Suivant</string>
+    <string name="previous">Précédent</string>
 </resources>
