@@ -44,6 +44,23 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(navController, startDestination = "home") {
+        composable("home") {
+            HomeScreen(navController)
+        }
+        composable("form") {
+            FormScreen(navController)
+        }
+        composable("display") {
+            DisplayFormScreen(navController)
+        }
+    }
+}
+
+@Composable
 fun HomeScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
@@ -84,20 +101,27 @@ fun FormScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(16.dp)
         )
+        Button(onClick = { navController.navigate("display") }) { Text(text = "Valider") }
         Button(onClick = { navController.popBackStack() }) { Text(text = "Retour") }
     }
 }
 
 @Composable
-fun AppNavigation() {
-    val navController = rememberNavController()
-
-    NavHost(navController, startDestination = "home") {
-        composable("home") {
-            HomeScreen(navController)
-        }
-        composable("form") {
-            FormScreen(navController)
+fun DisplayFormScreen(navController: NavHostController) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Affichage du formulaire",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+        Button(onClick = { navController.popBackStack() }) {
+            Text(text = "Retour")
         }
     }
 }
