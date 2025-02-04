@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,11 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.tp3.ui.theme.TP3HostNavTheme
 
 class MainActivity : ComponentActivity() {
@@ -54,8 +57,15 @@ fun AppNavigation() {
         composable("form") {
             FormScreen(navController)
         }
-        composable("display") {
-            DisplayFormScreen(navController)
+        composable(
+            "display/{name}&{age}",
+            arguments = listOf(
+                navArgument("name") { defaultValue = "" },
+                navArgument("age") { defaultValue = 0 })
+        ) { backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            val age = backStackEntry.arguments?.getInt("age") ?: 0
+            DisplayScreen(navController, name, age)
         }
     }
 }
@@ -83,6 +93,7 @@ fun HomeScreen(navController: NavHostController) {
 @Composable
 fun FormScreen(navController: NavHostController) {
     var name by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -101,13 +112,22 @@ fun FormScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(16.dp)
         )
-        Button(onClick = { navController.navigate("display") }) { Text(text = "Valider") }
+        TextField(
+            value = age,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            onValueChange = { newText -> age = newText },
+            label = { Text("Entrez votre age") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+        Button(onClick = { navController.navigate("display/$name&${age.toInt()}") }) { Text(text = "Valider") }
         Button(onClick = { navController.popBackStack() }) { Text(text = "Retour") }
     }
 }
 
 @Composable
-fun DisplayFormScreen(navController: NavHostController) {
+fun DisplayScreen(navController: NavHostController, name: String, age: Int) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -116,7 +136,17 @@ fun DisplayFormScreen(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Affichage du formulaire",
+            text = "Bienvenue",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+        Text(
+            text = name,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(25.dp))
+        Text(
+            text = "Vous avez $age ans !",
             style = MaterialTheme.typography.titleMedium
         )
         Spacer(modifier = Modifier.height(25.dp))
